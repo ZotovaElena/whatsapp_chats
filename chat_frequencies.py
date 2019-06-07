@@ -55,7 +55,7 @@ diacritica = {
     "ü": "u"
 }
 #regular expressions for normaliztion
-j = re.compile(r"j{2,}")
+j = re.compile(r"j{2,}") #detects the character the occurs two and more times
 jaja = re.compile(r'(ja){2,}')
 jeje = re.compile(r'(je){2,}')
 haha = re.compile(r'(ha){2,}')
