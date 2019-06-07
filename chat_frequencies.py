@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Jun  4 00:29:27 2019
-
-@author: zotov
-"""
 
 import pandas as pd 
 import re 
