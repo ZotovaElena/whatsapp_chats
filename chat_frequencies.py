@@ -245,7 +245,7 @@ stemmed_N2 = [stemmer.stem(t) for t in tokens_preproc_Name2]
 freq_N1_stemmed = nltk.FreqDist(stemmed_N1)
 freq_N2_stemmed = nltk.FreqDist(stemmed_N2
 
-most_common_N1 = freq_X.most_common(300)
+most_common_N1 = freq_N1.most_common(300)
 most_common_stemmed_N1 = freq_N1_stemmed.most_common(300)
 
 most_common_N2 = freq_N2.most_common(300)
@@ -299,6 +299,7 @@ def plot_graph(time_groups, name):
 def plot_graph_month(month_group, name):
 	plt.bar(range(len(month_group)), list(month_group.values()), align='center') 
 	plt.xticks(range(len(month_group)), list(month_group.keys()), rotation=90)
+	plt.show()
 	
 name = filename
 plot_graph(time_groups, name)	 
