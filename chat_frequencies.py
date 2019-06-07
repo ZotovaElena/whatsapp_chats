@@ -102,7 +102,7 @@ Name2_list = Name2['Text'].tolist()
 tokens_Name1 = [] #all tokens
 tokens_line_Name1 = [] #lines tokenized
 for l in Name1_list: 
-	#replace links and media message with a specific token
+	#replace links and media message with a specific token (it shows who sends more fotos and videos, and links)
 	l = re.sub(link, 'linksent', l)
 	l = re.sub('<Media omitted>', 'fotosent', l)
 	#preprocess all tokens
@@ -131,7 +131,9 @@ for l in Name2_list:
 #remove diacritics to normaize the text and do not count with spelling errors			
 tokens_preproc_Name1	= [] #all tokens normalized		
 for t in tokens_Name1: 
+	#replace the letters with diacritics by the letters without it
 	t = t.translate({ord(k): v for k, v in diacritica.items()})
+	#replace defined regular expression with single letters
 	t = re.sub(j, 'j', t)
 	t = re.sub(jaja, 'jaja', t)
 	t = re.sub(jeje, 'jaja', t)
