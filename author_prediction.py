@@ -62,7 +62,7 @@ X_test_new.shape
 
 feature_names_ch2 = [feature_names_chi2[i] for i in ch2.get_support(indices=True)]
 
-"""
+
 #first we do gridsearch over hyperparameters of SVM classifier
 from sklearn import svm
 from sklearn.model_selection import GridSearchCV
@@ -96,9 +96,8 @@ print(cm)
 #convert clssification report to pandas dataframe
 report_df = pd.read_fwf(io.StringIO(cl_report), sep="\s+")
 
-"""
-#train and test SVM model with best parameters selected after cross-validation
-clf = SVC(gamma=1, C=10, kernel='rbf')
+#train and test SVM model with best parameters selected after grid-search and cross-validation
+clf = SVC(gamma=gamma, C=C, kernel='rbf')
 clf.fit(X_train_new, y_train)
 y_pred = clf.predict(X_test_new)
 
@@ -111,10 +110,10 @@ cm = confusion_matrix(y_test, y_pred)
 target_names=['Name1', 'Name2']
     
 print(cm)
-print('f-score macro:', f_score_macro)
-print('f-score micro:', f_score_micro)
-print('precision: ', precision)
-print('recall: ', recall)
-print('accuracy', accuracy)
+print('Test f-score macro:', f_score_macro)
+print('Test f-score micro:', f_score_micro)
+print('Test precision: ', precision)
+print('Test recall: ', recall)
+print('Test accuracy', accuracy)
 
     
