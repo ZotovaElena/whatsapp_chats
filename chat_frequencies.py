@@ -75,6 +75,92 @@ def TextPreprocess(text):
 	text_n = re.sub(r'[0-9]', '', text_w) 
 	tokens = nltk.tokenize.word_tokenize(text_n) 
 	return tokens
+
+#get all tokens of the text and all lines tokenized
+def getTokens(message_list):
+    tokens_all = [] #all tokens
+    tokens_line = [] #lines tokenized
+    for l in message_list: 
+    #replace links and media message with a specific token
+        l = re.sub(link, 'linksent', l)
+        l = re.sub('<Media omitted>', 'fotosent', l)
+        #preprocess all tokens
+        tokens = TextPreprocess(l)
+        token_line = [] #line tokenized
+        for t in tokens: 
+            #remove all stopwords and punctuation
+            if t not in stop: 
+                tokens_all.append(t)
+            token_line.append(t)
+        tokens_line.append(token_line)
+    return tokens_all, tokens_line
+
+#preprocess: remove diacritics, normalize words
+def normalizeTokens(tokens): 
+    tokens_preproc    = [] #all tokens normalized        
+    for t in tokens: 
+        t = t.translate({ord(k): v for k, v in diacritica.items()})
+        t = re.sub(j, 'j', t)
+        t = re.sub(jaja, 'jaja', t)
+        t = re.sub(jeje, 'jaja', t)
+        t = re.sub(haha, 'jaja', t)
+        t = re.sub(a, 'a', t)
+        t = re.sub(e, 'e', t)
+        t = re.sub(i, 'i', t)
+        t = re.sub(o, 'o', t)
+        t = re.sub(u, 'u', t)
+        t = re.sub(f, 'f', t)
+        t = re.sub(h, 'h', t)
+        t = re.sub(m, 'm', t)
+        tokens_preproc.append(t)
+    return tokens_preproc
+
+#returns a list of lines normaized
+def normalizeLine(tokens_line):
+    tokens_line_preproc = [] #lines with tokens normalized
+    for l in tokens_line: 
+        token_line = []
+        for t in l: 
+            t = t.translate({ord(k): v for k, v in diacritica.items()})
+            t = re.sub(j, 'j', t)
+            t = re.sub(jaja, 'jaja', t)
+            t = re.sub(jeje, 'jaja', t)
+            t = re.sub(haha, 'jaja', t)
+            t = re.sub(a, 'a', t)
+            t = re.sub(e, 'e', t)
+            t = re.sub(i, 'i', t)
+            t = re.sub(o, 'o', t)
+            t = re.sub(u, 'u', t)
+            t = re.sub(f, 'f', t)
+            t = re.sub(h, 'h', t)
+            t = re.sub(m, 'm', t)
+            token_line.append(t)
+        tokens_line_preproc.append(token_line)
+    return tokens_line_preproc
+
+#all tokens stemmed
+def stemTokens(tokens_line):
+    
+    tokens_line_stemmed = [] #lines with stemmed words
+    for l in tokens_line:
+        stem_line = []
+        for t in l:
+            t = stemmer.stem(t)
+            stem_line.append(t)
+        tokens_line_stemmed.append(stem_line)
+    return tokens_line_stemmed
+
+#returns a list of lines stemmed
+def stemLine(tokens_line):        
+    tokens_line_stemmed = []
+    for l in tokens_line:
+        stem_line = []
+        for t in l:
+            t = stemmer.stem(t)
+            stem_line.append(t)
+        tokens_line_stemmed.append(stem_line)  
+    return tokens_line_stemmed
+
 #read the text file with chat
 filename = 'chat_main.txt'
 text = open(filename, 'rt', encoding="utf8").readlines()
@@ -98,152 +184,39 @@ Name2 = df.loc[df['Name'] == 'Name2']
 #making a list of strings where each string is a message
 Name1_list = Name1['Text'].tolist()
 Name2_list = Name2['Text'].tolist()
-#collect all tokens
-tokens_Name1 = [] #all tokens
-tokens_line_Name1 = [] #lines tokenized
-for l in Name1_list: 
-	#replace links and media message with a specific token (it shows who sends more fotos and videos, and links)
-	l = re.sub(link, 'linksent', l)
-	l = re.sub('<Media omitted>', 'fotosent', l)
-	#preprocess all tokens
-	tokens = TextPreprocess(l)
-	token_line = [] #line tokenized
-	for t in tokens: 
-		#remove all stopwords and punctuation
-		if t not in stop: 
-			tokens_Name1.append(t)
-		token_line.append(t)
-	tokens_line_Name1.append(token_line)
 
-tokens_Name2 = []
-tokens_line_Name2 = []
-for l in Name2_list: 
-	l = re.sub(link, 'linksent', l)
-	l = re.sub('<Media omitted>', 'fotosent', l)
-	tokens = TextPreprocess(l)
-	token_line = []
-	for t in tokens:
-		if t not in stop: 
-			tokens_Name2.append(t)
-		token_line.append(t)
-	tokens_line_Name2.append(token_line)
 
-#remove diacritics to normaize the text and do not count with spelling errors			
-tokens_preproc_Name1	= [] #all tokens normalized		
-for t in tokens_Name1: 
-	#replace the letters with diacritics by the letters without it
-	t = t.translate({ord(k): v for k, v in diacritica.items()})
-	#replace defined regular expression with single letters
-	t = re.sub(j, 'j', t)
-	t = re.sub(jaja, 'jaja', t)
-	t = re.sub(jeje, 'jaja', t)
-	t = re.sub(haha, 'jaja', t)
-	t = re.sub(a, 'a', t)
-	t = re.sub(e, 'e', t)
-	t = re.sub(i, 'i', t)
-	t = re.sub(o, 'o', t)
-	t = re.sub(u, 'u', t)
-	t = re.sub(f, 'f', t)
-	t = re.sub(h, 'h', t)
-	t = re.sub(m, 'm', t)
-	tokens_preproc_Name1.append(t)
-	
-tokens_line_preproc_Name1 = [] #lines with tokens normalized
-for l in tokens_line_Name1: 
-	token_line = []
-	for t in l: 
-		t = t.translate({ord(k): v for k, v in diacritica.items()})
-		t = re.sub(j, 'j', t)
-		t = re.sub(jaja, 'jaja', t)
-		t = re.sub(jeje, 'jaja', t)
-		t = re.sub(haha, 'jaja', t)
-		t = re.sub(a, 'a', t)
-		t = re.sub(e, 'e', t)
-		t = re.sub(i, 'i', t)
-		t = re.sub(o, 'o', t)
-		t = re.sub(u, 'u', t)
-		t = re.sub(f, 'f', t)
-		t = re.sub(h, 'h', t)
-		t = re.sub(m, 'm', t)
-		token_line.append(t)
-	tokens_line_preproc_Name1.append(token_line)
+#process the messages and write them to new columns in Dataframes
+tokens_Name1, tokens_line_Name1 = getTokens(Name1_list)
+Name1['Text_full'] = tokens_line_Name1
+tokens_norm_Name1 = normalizeTokens(tokens_Name1)
+tokens_line_norm_Name1 = normalizeLine(tokens_line_Name1)
+Name1['Text_pre'] = tokens_line_norm_Name1
+stemmed_Name1 = stemTokens(tokens_Name1)
+tokens_line_stemmed_Name1 = stemLine(tokens_line_norm_Name1)
+Name1['Text_stemmed'] = tokens_line_stemmed_Name1   
 
-#add new column to dataset		
-Name1['Text_pre'] = tokens_line_preproc_Name1
-
-tokens_preproc_Name2 = []
-for t in tokens_Name2: 
-	t = t.translate({ord(k): v for k, v in diacritica.items()})
-	t = re.sub(j, 'j', t)
-	t = re.sub(jaja, 'jaja', t)
-	t = re.sub(jeje, 'jaja', t)
-	t = re.sub(haha, 'jaja', t)
-	t = re.sub(a, 'a', t)
-	t = re.sub(e, 'e', t)
-	t = re.sub(i, 'i', t)
-	t = re.sub(o, 'o', t)
-	t = re.sub(u, 'u', t)
-	t = re.sub(f, 'f', t)
-	t = re.sub(h, 'h', t)
-	t = re.sub(m, 'm', t)
-	tokens_preproc_Name2.append(t)
-
-tokens_line_preproc_Name2 = []
-for l in tokens_line_Name2: 
-	token_line = []
-	for t in l: 
-		t = t.translate({ord(k): v for k, v in diacritica.items()})
-		t = re.sub(j, 'j', t)
-		t = re.sub(jaja, 'jaja', t)
-		t = re.sub(jeje, 'jaja', t)
-		t = re.sub(haha, 'jaja', t)
-		t = re.sub(a, 'a', t)
-		t = re.sub(e, 'e', t)
-		t = re.sub(i, 'i', t)
-		t = re.sub(o, 'o', t)
-		t = re.sub(u, 'u', t)
-		t = re.sub(f, 'f', t)
-		t = re.sub(h, 'h', t)
-		t = re.sub(m, 'm', t)
-		token_line.append(t)
-	
-	tokens_line_preproc_Name2.append(token_line)
-
-Name2['Text_pre'] = tokens_line_preproc_Name2
-
-#stemming
-tokens_line_stemmed_Name1 = [] #lines with stemmed words
-for l in tokens_line_preproc_Name1:
-	stem_line = []
-	for t in l:
-		t = stemmer.stem(t)
-		stem_line.append(t)
-	tokens_line_stemmed_Name1.append(stem_line)
-	
-#add new column with stemmed lines		
-Name1['Text_stemmed'] = tokens_line_stemmed_Name1		
-		
-tokens_line_stemmed_Name2 = []
-for l in tokens_line_preproc_Name2:
-	stem_line = []
-	for t in l:
-		t = stemmer.stem(t)
-		stem_line.append(t)
-	tokens_line_stemmed_Name2.append(stem_line)		
-
+tokens_Name2, tokens_line_Name2 = getTokens(Name2_list)
+Name2['Text_full'] = tokens_line_Name2
+tokens_norm_Name2 = normalizeTokens(tokens_Name2)
+tokens_line_norm_Name2 = normalizeLine(tokens_line_Name2)
+Name2['Text_pre'] = tokens_line_norm_Name2
+stemmed_Name2 = stemTokens(tokens_Name2)
+tokens_line_stemmed_Name2 = stemLine(tokens_line_norm_Name2)
 Name2['Text_stemmed'] = tokens_line_stemmed_Name2
+
 
 print('Calculating frequencies')
 #calculate frequent words
-freq_N1 = nltk.FreqDist(tokens_preproc_Name1)
-freq_N2 = nltk.FreqDist(tokens_preproc_Name2)
+freq_N1 = nltk.FreqDist(tokens_norm_Name1)
+freq_N2 = nltk.FreqDist(tokens_norm_Name2)
 
 #stem all the words to normalize the frequencies
-stemmed_N1 = [stemmer.stem(t) for t in tokens_preproc_Name1]
-stemmed_N2 = [stemmer.stem(t) for t in tokens_preproc_Name2]
+stemmed_N1 = [stemmer.stem(t) for t in tokens_norm_Name1]
+stemmed_N2 = [stemmer.stem(t) for t in tokens_norm_Name2]
 #frequencies of stemmed words
-freq_N1_stemmed = nltk.FreqDist(stemmed_N1)
-freq_N2_stemmed = nltk.FreqDist(stemmed_N2
+freq_N1_stemmed = nltk.FreqDist(stemmed_Name1)
+freq_N2_stemmed = nltk.FreqDist(stemmed_Name2)
 
 most_common_N1 = freq_N1.most_common(300)
 most_common_stemmed_N1 = freq_N1_stemmed.most_common(300)
