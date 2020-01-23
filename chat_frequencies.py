@@ -141,12 +141,9 @@ def normalizeLine(tokens_line):
 #all tokens stemmed
 def stemTokens(tokens):
     tokens_stemmed = [] #stemmed words
-    for l in tokens_line:
-        stem = []
-        for t in l:
-            t = stemmer.stem(t)
-            stem.append(t)
-        tokens_stemmed.append(stem)
+    for l in tokens:
+        l = stemmer.stem(l)
+        tokens_stemmed.append(l)
     return tokens_stemmed
 
 #returns a list of lines stemmed
